@@ -38,11 +38,23 @@ class Spark_spec {
     public $dependencies = array();
 
     /**
+     * The CodeIgniter version this spark has been tested up until
+     * @var string Must be in the format x.x.x
+     */
+    public $compatibility = '';
+
+    /**
+     * The tags that should be associated with this spark
+     * @var array
+     */
+    public $tags = array();
+
+    /**
      * The filename of the spec, including the filepath if necesarry
      * @var string
      */
     private $_specFile = 'spec.php';
-    
+
     /**
      * The path to the spark, which is guessed from the specFile filepath supplied
      * @var string
@@ -54,7 +66,7 @@ class Spark_spec {
      * @var string
      */
     private $_readme = FALSE;
-    
+
     /**
      * Load a spark spec file and tries to validate it
      * @param string $filepath
@@ -67,7 +79,7 @@ class Spark_spec {
         $filepath   = rtrim($filepath, '/') . '/';
         $filename   = 'spark.info';
         $specfile   = $filepath . $filename;
-        
+
         /* Check that the spark file exists */
         if(!file_exists($specfile))
         {
@@ -102,12 +114,26 @@ class Spark_spec {
 
         $spark->version = $spec['version'];
 
+        if(!array_key_exists('compatibility', $spec))
+        {
+            throw new SpecValidationException("The spec does not contain a compatibility (tested up until): $filename");
+        }
+
+        $spark->compatibility = $spec['compatibility'];
+
         if(!array_key_exists('dependencies', $spec))
         {
             throw new SpecValidationException("The spec does not contain a spec dependency: $filename");
         }
-        
+
         $spark->dependencies = $spec['dependencies'];
+
+        if(!array_key_exists('tags', $spec))
+        {
+            throw new SpecValidationException("The spec does not contain a tags entry: $filename");
+        }
+
+        $spark->tags = $spec['tags'];
 
         $spark->validate();
 
@@ -122,7 +148,9 @@ class Spark_spec {
     {
         $this->_validateName($this->name);
         $this->_validateVersion($this->version);
+        $this->_validateCompatibility($this->compatibility);
         $this->_validateDependencies($this->dependencies);
+        $this->_validateTags($this->tags);
         $this->_validateStructure($this->_sparkPath);
         $this->_validateReadme($this->_sparkPath);
     }
@@ -155,9 +183,19 @@ class Spark_spec {
         {
             if(!is_numeric($v) || $v < 0)
             {
-                throw new SpecValidationException("Each component of the versions string must be an integer >= 0: {$version}");
+                throw new SpecValidationException("Each component of the version string must be an integer >= 0: {$version}");
             }
         }
+    }
+
+    /**
+     * Validate the CodeIgniter compatibility version
+     * @throws SpecValidationException
+     * @param string $version
+     */
+    private function _validateCompatibility($version)
+    {
+        $this->_validateVersion($version);
     }
 
     /**
@@ -200,6 +238,29 @@ class Spark_spec {
     }
 
     /**
+     * Validate tag information
+     * @throws SpecValidationException
+     * @param array $tags
+     */
+    private function _validateTags($tags)
+    {
+        /* Validate the dependencies */
+        if(!is_array($tags))
+        {
+            throw new SpecValidationException("The tag list should be an array.");
+        }
+
+        foreach($tags as $tag)
+        {
+            if(!is_string($tag))
+                throw new SpecValidationException("Each tag in the tag list should be a string: $tag");
+
+            if(strlen($tag) < 2)
+                throw new SpecValidationException("Each tag should be at least 2 characters long: $tag");
+        }
+    }
+
+    /**
      * Inspect a directory that is supposedly is a spark, and see if it looks
      *  like it really is one
      * @param string $spark_info
@@ -238,7 +299,7 @@ class Spark_spec {
      */
     private function _validateReadme($dir)
     {
-        $files = static::getFilenames($dir);
+        $files = $this->getFilenames($dir);
 
         $readme = FALSE;
         $file   = '';

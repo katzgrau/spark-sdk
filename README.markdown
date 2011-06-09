@@ -26,7 +26,7 @@ sparks/myspark/1.0/.
 
 From our shell, we'll run this on OSX or linux:
 
-`$ php sparks/spark-sdk/1.0/scripts/validate-spark.php sparks/myspark\1.0`
+`$ php sparks/spark-sdk/1.0/scripts/validate-spark.php sparks/myspark/1.0`
 
 On Windows:
 

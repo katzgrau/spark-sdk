@@ -19,7 +19,7 @@ class Yaml {
 	 * @param   string  $string  the yaml to parse
 	 * @return  array   the parsed yaml array
 	 */
-	public function parse_string($string)
+	public static function parse_string($string)
 	{
 		return Spyc::YAMLLoadString($string);
 	}
@@ -30,7 +30,7 @@ class Yaml {
 	 * @param   string  $string  the yaml file to parse
 	 * @return  array   the parsed yaml array
 	 */
-	public function parse_file($file)
+	public static function parse_file($file)
 	{
 		if ( ! is_file($file))
 		{
@@ -48,7 +48,7 @@ class Yaml {
 	 * @param   bool    $wordwrap  word wrap after this many characters (0 for no wrap)
 	 * @return  string  the yaml string
 	 */
-	public function dump($array, $indent = false, $wordwrap = 0)
+	public static function dump($array, $indent = false, $wordwrap = 0)
 	{
 		return Spyc::YAMLDump($array, $indent, $wordwrap);
 	}

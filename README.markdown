@@ -26,11 +26,11 @@ sparks/myspark/1.0/.
 
 From our shell, we'll run this on OSX or linux:
 
-`$ php sparks/spark-sdk/1.0/scripts/validate-spark.php sparks/myspark\1.0`
+`$ php sparks/spark-sdk/0.0.3/scripts/validate-spark.php sparks/myspark/1.0`
 
 On Windows:
 
-`> php sparks\spark-sdk\1.0\scripts\validate-spark.php sparks\myspark\1.0`
+`> php sparks\spark-sdk\0.0.3\scripts\validate-spark.php sparks\myspark\1.0`
 
 This will run the spark validation script for the myspark, and output any errors that might be present. The only thing it does not currently do is verify the existence of dependency sparks on GetSparks.org.
 
